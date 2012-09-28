@@ -2,23 +2,19 @@ package de.gzockoll.selenium;
 
 import static de.gzockoll.selenium.Configuration.HUB_URL;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -32,7 +28,6 @@ import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("javadoc")
 @RunWith(Parallelized.class)
@@ -55,18 +50,43 @@ public abstract class AbstractSeleniumTest {
             if (e != null)
                 getLogger().debug("Caught", e);
             if (driver != null) {
-                String scrFilename = df.format(new Date()) + "-" + browser + "-" + description.getClassName() + "-"
-                        + description.getMethodName() + ".png";
-                try {
-                    File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-                    File outputFile = new File(SCREEN_SHOTS_RESULTS_PATH, scrFilename);
-                    getLogger().info(scrFilename + " screenshot created.");
-                    FileUtils.copyFile(scrFile, outputFile);
-                } catch (Exception ex) {
-                    getLogger().error("Error writing screenshot " + scrFilename, ex);
-                }
+                String scrFilename = getScreenshotBaseFilename(description) + ".png";
+                createScreenshot(scrFilename);
             }
         }
+
+        /**
+         * @param description
+         * @return
+         */
+        private String getScreenshotBaseFilename(Description description) {
+            String scrFilename = df.format(new Date()) + "-" + browser + "-" + description.getClassName() + "-"
+                    + description.getMethodName() + ".png";
+            return scrFilename;
+        }
+
+        /**
+         * @param scrFilename
+         */
+        private void createScreenshot(String scrFilename) {
+            try {
+                File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                File outputFile = new File(SCREEN_SHOTS_RESULTS_PATH, scrFilename);
+                getLogger().info(scrFilename + " screenshot created.");
+                FileUtils.copyFile(scrFile, outputFile);
+            } catch (Exception ex) {
+                getLogger().error("Error writing screenshot " + scrFilename, ex);
+            }
+        }
+
+        protected void succeeded(Description description) {
+            getLogger().debug("Creating screenshot from: " + description);
+            if (driver != null) {
+                String scrFilename = getScreenshotBaseFilename(description) + "-final.png";
+                createScreenshot(scrFilename);
+            }
+
+        };
     };
 
     @Parameters
@@ -84,13 +104,14 @@ public abstract class AbstractSeleniumTest {
         DesiredCapabilities cap = new DesiredCapabilities();
         cap.setBrowserName(browser);
         driver = new Augmenter().augment(new RemoteWebDriver(new URL(HUB_URL), cap));
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         assertNotNull(driver);
     }
 
     @After
     public void tearDown() throws Exception {
-        if (driver != null)
-            driver.close();
+        // if (driver != null)
+        // driver.close();
     }
 
     protected boolean isTextPresent(String text) {
