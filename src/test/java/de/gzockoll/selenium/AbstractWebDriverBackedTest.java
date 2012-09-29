@@ -3,11 +3,11 @@ package de.gzockoll.selenium;
 import org.junit.Before;
 import org.openqa.selenium.WebDriverBackedSelenium;
 
-public abstract class AbstractWebDriverBackedTest extends AbstractSeleniumTestBase {
+public abstract class AbstractWebDriverBackedTest extends
+		AbstractSeleniumTestBase {
 
-	public AbstractWebDriverBackedTest(String browser) {
-		super(browser);
-		// TODO Auto-generated constructor stub
+	public AbstractWebDriverBackedTest(String browser, Environment environment) {
+		super(browser, environment);
 	}
 
 	@Override
@@ -16,7 +16,4 @@ public abstract class AbstractWebDriverBackedTest extends AbstractSeleniumTestBa
 		super.setUp();
 		selenium = new WebDriverBackedSelenium(driver, getBaseUrl());
 	}
-
-	protected abstract String getBaseUrl();
-
 }

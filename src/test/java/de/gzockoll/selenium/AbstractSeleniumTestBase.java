@@ -44,9 +44,16 @@ public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
 	}
 	private static Collection<WebDriver> tasks = new ArrayList<WebDriver>();
 	private String browser;
+	protected Environment environment;
 	protected WebDriver driver;
 
 	protected abstract Logger getLogger();
+
+	public AbstractSeleniumTestBase(String browser, Environment environment) {
+		super();
+		this.browser = browser;
+		this.environment = environment;
+	}
 
 	@Rule
 	public TestRule rule = new TestWatcher() {
@@ -108,16 +115,12 @@ public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
 		return Configuration.browsersStrings();
 	}
 
-	public AbstractSeleniumTestBase(String browser) {
-		super();
-		this.browser = browser;
-	}
-
 	@Override
 	@Before
 	public void setUp() throws Exception {
 		DesiredCapabilities cap = new DesiredCapabilities();
 		cap.setBrowserName(browser);
+		cap.setJavascriptEnabled(true);
 		driver = new Augmenter().augment(new RemoteWebDriver(new URL(HUB_URL),
 				cap));
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -147,4 +150,6 @@ public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
 		}
 
 	}
+
+	protected abstract String getBaseUrl();
 }

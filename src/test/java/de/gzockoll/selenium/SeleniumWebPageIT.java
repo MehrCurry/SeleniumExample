@@ -7,15 +7,9 @@ import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("javadoc")
 public class SeleniumWebPageIT extends AbstractWebDriverTestBase {
-	private String baseUrl = "http://code.google.com/";
 
-	/**
-	 * Create a new SomeTestsIT.
-	 * 
-	 * @param browser
-	 */
-	public SeleniumWebPageIT(String browser) {
-		super(browser);
+	public SeleniumWebPageIT(String browser, Environment environment) {
+		super(browser, environment);
 	}
 
 	/**
@@ -31,7 +25,7 @@ public class SeleniumWebPageIT extends AbstractWebDriverTestBase {
 
 	@Test
 	public void testNormalFlow() throws Exception {
-		driver.get(baseUrl + "/p/selenium/wiki/SeIDEReleaseNotes");
+		driver.get(getBaseUrl() + "/p/selenium/wiki/SeIDEReleaseNotes");
 		driver.findElement(By.linkText("Project Home")).click();
 		driver.findElement(By.cssSelector("#wikicontent > ul > li > a"))
 				.click();
@@ -39,5 +33,10 @@ public class SeleniumWebPageIT extends AbstractWebDriverTestBase {
 		driver.findElement(
 				By.xpath("(//a[contains(text(),'Introduction')])[2]")).click();
 		assertTrue(isTextPresent("download the IDE from the SeleniumHQ"));
+	}
+
+	@Override
+	protected String getBaseUrl() {
+		return environment.getPmiUrl();
 	}
 }
