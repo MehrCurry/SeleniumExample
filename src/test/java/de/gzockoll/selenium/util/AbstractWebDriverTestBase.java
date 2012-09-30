@@ -1,4 +1,4 @@
-package de.gzockoll.selenium;
+package de.gzockoll.selenium.util;
 
 public abstract class AbstractWebDriverTestBase extends
 		AbstractSeleniumTestBase {

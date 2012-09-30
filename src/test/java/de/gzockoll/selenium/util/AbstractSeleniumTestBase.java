@@ -1,6 +1,6 @@
-package de.gzockoll.selenium;
+package de.gzockoll.selenium.util;
 
-import static de.gzockoll.selenium.Configuration.*;
+import static de.gzockoll.selenium.util.Configuration.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -89,9 +89,9 @@ public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
 						.getScreenshotAs(OutputType.FILE);
 				File outputFile = new File(SCREEN_SHOTS_RESULTS_PATH,
 						scrFilename);
+				FileUtils.copyFile(scrFile, outputFile);
 				getLogger()
 						.info(outputFile.toString() + " screenshot created.");
-				FileUtils.copyFile(scrFile, outputFile);
 			} catch (Exception ex) {
 				getLogger()
 						.error("Error writing screenshot " + scrFilename, ex);

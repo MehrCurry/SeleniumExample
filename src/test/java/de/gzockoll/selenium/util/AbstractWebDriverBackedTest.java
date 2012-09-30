@@ -1,4 +1,4 @@
-package de.gzockoll.selenium;
+package de.gzockoll.selenium.util;
 
 import org.junit.Before;
 import org.openqa.selenium.WebDriverBackedSelenium;

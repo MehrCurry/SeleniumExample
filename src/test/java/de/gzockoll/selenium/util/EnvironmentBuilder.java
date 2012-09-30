@@ -5,7 +5,7 @@
  * See generator home page at: http://code.google.com/p/fluent-builders-generator-eclipse-plugin/
  */
 
-package de.gzockoll.selenium;
+package de.gzockoll.selenium.util;
 
 public class EnvironmentBuilder extends
 		EnvironmentBuilderBase<EnvironmentBuilder> {

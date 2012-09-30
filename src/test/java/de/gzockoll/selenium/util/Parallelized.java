@@ -1,4 +1,4 @@
-package de.gzockoll.selenium;
+package de.gzockoll.selenium.util;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

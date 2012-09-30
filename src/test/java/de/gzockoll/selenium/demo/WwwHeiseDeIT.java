@@ -1,13 +1,16 @@
-package de.gzockoll.selenium;
+package de.gzockoll.selenium.demo;
 
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("javadoc")
-public class WwwHeiseDeWebDriverBackedIT extends AbstractWebDriverBackedTest {
+import de.gzockoll.selenium.util.AbstractWebDriverTestBase;
+import de.gzockoll.selenium.util.Environment;
 
-	public WwwHeiseDeWebDriverBackedIT(String browser, Environment environment) {
+@SuppressWarnings("javadoc")
+public class WwwHeiseDeIT extends AbstractWebDriverTestBase {
+
+	public WwwHeiseDeIT(String browser, Environment environment) {
 		super(browser, environment);
 	}
 
@@ -19,15 +22,14 @@ public class WwwHeiseDeWebDriverBackedIT extends AbstractWebDriverBackedTest {
 		return logger;
 	}
 
-	private static Logger logger = LoggerFactory
-			.getLogger(WwwHeiseDeWebDriverBackedIT.class);
+	private static Logger logger = LoggerFactory.getLogger(WwwHeiseDeIT.class);
 
 	@Test
 	public void testImpressum() throws Exception {
-		selenium.open("/");
-		verifyEquals(
+		driver.get(getBaseUrl() + "/");
+		assertEquals(
 				"IT-News, c't, iX, Technology Review, Telepolis | heise online",
-				selenium.getTitle());
+				driver.getTitle());
 	}
 
 	@Override

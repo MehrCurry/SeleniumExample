@@ -60,7 +60,8 @@
       <exclude>**/*IT.java</exclude>
     </excludes>
     <parallel>classes</parallel>
-    <threadCount>2</threadCount>
+    <perCoreThreadCount>true</perCoreThreadCount>
+    <threadCount>1</threadCount>
   </configuration>
   <executions>
     <execution>
