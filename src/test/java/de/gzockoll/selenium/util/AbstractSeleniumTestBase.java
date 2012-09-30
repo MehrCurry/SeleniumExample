@@ -7,9 +7,10 @@ import java.io.File;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
@@ -30,19 +31,23 @@ import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.selenium.SeleneseTestBase;
 
 @SuppressWarnings("javadoc")
 @RunWith(Parallelized.class)
 public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(AbstractSeleniumTestBase.class);
 	protected static final String SCREEN_SHOTS_RESULTS_PATH = "./target/site/images";
 	protected static final DateFormat df = new SimpleDateFormat(
 			"yyyyMMdd-HHmmss");
 	static {
 		new File(SCREEN_SHOTS_RESULTS_PATH).mkdirs();
 	}
-	private static Collection<WebDriver> tasks = new ArrayList<WebDriver>();
+	private static Queue<WebDriver> tasks = new LinkedList<WebDriver>();
 	private String browser;
 	protected Environment environment;
 	protected WebDriver driver;
@@ -57,6 +62,18 @@ public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
 
 	@Rule
 	public TestRule rule = new TestWatcher() {
+		@Override
+		protected void succeeded(Description description) {
+			if (Configuration.SCREENSHOT_ON_SUCCESS) {
+				getLogger().debug("Creating screenshot from: " + description);
+				if (driver != null) {
+					String scrFilename = getScreenshotBaseFilename(description)
+							+ "-final.png";
+					createScreenshot(scrFilename);
+				}
+			}
+		}
+
 		@Override
 		protected void failed(Throwable e, Description description) {
 			getLogger().debug("Creating screenshot from: " + description);
@@ -96,17 +113,6 @@ public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
 				getLogger()
 						.error("Error writing screenshot " + scrFilename, ex);
 			}
-		}
-
-		@Override
-		protected void succeeded(Description description) {
-			getLogger().debug("Creating screenshot from: " + description);
-			if (driver != null) {
-				String scrFilename = getScreenshotBaseFilename(description)
-						+ "-final.png";
-				createScreenshot(scrFilename);
-			}
-
 		};
 	};
 
@@ -131,12 +137,16 @@ public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
 	@After
 	public void tearDown() throws Exception {
 		tasks.add(driver);
+		getLogger().debug("Preparing to close driver: " + driver);
 	}
 
 	@AfterClass
-	public static void waitForTasks() throws InterruptedException {
-		for (WebDriver driver : tasks)
-			driver.quit();
+	public static void quitDrivers() throws InterruptedException {
+		while (!tasks.isEmpty()) {
+			WebDriver d = tasks.remove();
+			logger.debug("Closing driver: " + d);
+			d.quit();
+		}
 	}
 
 	protected boolean isTextPresent(String text) {

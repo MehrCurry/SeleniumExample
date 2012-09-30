@@ -11,6 +11,8 @@ import java.util.Map;
 public class Configuration {
 	public static final String HUB_URL = System.getProperty("HUB",
 			"http://localhost:4444/wd/hub");
+	public static final boolean SCREENSHOT_ON_SUCCESS = Boolean
+			.parseBoolean(System.getProperty("SCREENSHOT_ON_SUCCESS", "false"));
 	public static Map<String, Environment> environments = new HashMap<String, Environment>();
 
 	static {

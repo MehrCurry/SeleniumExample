@@ -4,11 +4,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.gzockoll.selenium.util.AbstractWebDriverBackedTest;
+import de.gzockoll.selenium.util.AbstractWebDriverBackedTestBase;
 import de.gzockoll.selenium.util.Environment;
 
 @SuppressWarnings("javadoc")
-public class WwwHeiseDeWebDriverBackedIT extends AbstractWebDriverBackedTest {
+public class WwwHeiseDeWebDriverBackedIT extends AbstractWebDriverBackedTestBase {
 
 	public WwwHeiseDeWebDriverBackedIT(String browser, Environment environment) {
 		super(browser, environment);

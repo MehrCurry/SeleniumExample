@@ -3,10 +3,10 @@ package de.gzockoll.selenium.util;
 import org.junit.Before;
 import org.openqa.selenium.WebDriverBackedSelenium;
 
-public abstract class AbstractWebDriverBackedTest extends
+public abstract class AbstractWebDriverBackedTestBase extends
 		AbstractSeleniumTestBase {
 
-	public AbstractWebDriverBackedTest(String browser, Environment environment) {
+	public AbstractWebDriverBackedTestBase(String browser, Environment environment) {
 		super(browser, environment);
 	}
 
