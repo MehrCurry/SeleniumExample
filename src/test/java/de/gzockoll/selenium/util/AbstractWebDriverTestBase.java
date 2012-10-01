@@ -1,9 +1,11 @@
 package de.gzockoll.selenium.util;
 
+import org.openqa.selenium.WebDriver;
+
 public abstract class AbstractWebDriverTestBase extends
 		AbstractSeleniumTestBase {
 
-	public AbstractWebDriverTestBase(String browser, Environment environment) {
-		super(browser, environment);
+	public AbstractWebDriverTestBase(WebDriver driver, Environment environment) {
+		super(driver, environment);
 	}
 }

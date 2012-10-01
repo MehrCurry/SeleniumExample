@@ -1,6 +1,7 @@
 package de.gzockoll.selenium.demo;
 
 import org.junit.Test;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,8 +11,8 @@ import de.gzockoll.selenium.util.Environment;
 @SuppressWarnings("javadoc")
 public class WwwHeiseDeIT extends AbstractWebDriverTestBase {
 
-	public WwwHeiseDeIT(String browser, Environment environment) {
-		super(browser, environment);
+	public WwwHeiseDeIT(WebDriver driver, Environment environment) {
+		super(driver, environment);
 	}
 
 	/**

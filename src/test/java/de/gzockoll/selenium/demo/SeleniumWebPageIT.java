@@ -2,6 +2,7 @@ package de.gzockoll.selenium.demo;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +12,8 @@ import de.gzockoll.selenium.util.Environment;
 @SuppressWarnings("javadoc")
 public class SeleniumWebPageIT extends AbstractWebDriverTestBase {
 
-	public SeleniumWebPageIT(String browser, Environment environment) {
-		super(browser, environment);
+	public SeleniumWebPageIT(WebDriver driver, Environment environment) {
+		super(driver, environment);
 	}
 
 	/**

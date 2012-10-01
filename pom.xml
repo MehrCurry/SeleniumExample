@@ -61,7 +61,7 @@
     </excludes>
     <parallel>classes</parallel>
     <perCoreThreadCount>true</perCoreThreadCount>
-    <threadCount>1</threadCount>
+    <threadCount>2</threadCount>
   </configuration>
   <executions>
     <execution>

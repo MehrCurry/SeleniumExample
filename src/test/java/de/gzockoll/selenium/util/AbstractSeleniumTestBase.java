@@ -1,22 +1,15 @@
 package de.gzockoll.selenium.util;
 
-import static de.gzockoll.selenium.util.Configuration.*;
-import static org.junit.Assert.*;
-
 import java.io.File;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
@@ -24,12 +17,10 @@ import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 import org.openqa.selenium.By;
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.Augmenter;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,18 +38,48 @@ public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
 	static {
 		new File(SCREEN_SHOTS_RESULTS_PATH).mkdirs();
 	}
-	private static Queue<WebDriver> tasks = new LinkedList<WebDriver>();
-	private String browser;
+	private static Queue<WebDriver> drivers = new LinkedList<WebDriver>();
 	protected Environment environment;
 	protected WebDriver driver;
+	private String browser;
 
 	protected abstract Logger getLogger();
 
-	public AbstractSeleniumTestBase(String browser, Environment environment) {
+	public AbstractSeleniumTestBase(WebDriver driver, Environment environment) {
 		super();
-		this.browser = browser;
+		this.driver = driver;
 		this.environment = environment;
+		this.browser = ((HasCapabilities) driver).getCapabilities()
+				.getBrowserName();
+		drivers.add(driver);
 	}
+
+	@Parameters
+	public static Collection driverConfigurations() {
+		return Configuration.driverConfigurations();
+	}
+
+	@AfterClass
+	public static void quitDrivers() throws InterruptedException {
+		while (!drivers.isEmpty()) {
+			WebDriver d = drivers.remove();
+			d.quit();
+		}
+	}
+
+	protected boolean isTextPresent(String text) {
+		try {
+			boolean result = driver.findElement(By.xpath("//*[contains(.,'"
+					+ text + "')]")) != null;
+			return result;
+		} catch (Exception e) {
+			getLogger().warn("Exception: " + e);
+			return false;
+		}
+
+	}
+
+	protected abstract String getBaseUrl();
 
 	@Rule
 	public TestRule rule = new TestWatcher() {
@@ -115,51 +136,4 @@ public abstract class AbstractSeleniumTestBase extends SeleneseTestBase {
 			}
 		};
 	};
-
-	@Parameters
-	public static Collection browsersStrings() {
-		return Configuration.browsersStrings();
-	}
-
-	@Override
-	@Before
-	public void setUp() throws Exception {
-		DesiredCapabilities cap = new DesiredCapabilities();
-		cap.setBrowserName(browser);
-		cap.setJavascriptEnabled(true);
-		driver = new Augmenter().augment(new RemoteWebDriver(new URL(HUB_URL),
-				cap));
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-		assertNotNull(driver);
-	}
-
-	@Override
-	@After
-	public void tearDown() throws Exception {
-		tasks.add(driver);
-		getLogger().debug("Preparing to close driver: " + driver);
-	}
-
-	@AfterClass
-	public static void quitDrivers() throws InterruptedException {
-		while (!tasks.isEmpty()) {
-			WebDriver d = tasks.remove();
-			logger.debug("Closing driver: " + d);
-			d.quit();
-		}
-	}
-
-	protected boolean isTextPresent(String text) {
-		try {
-			boolean result = driver.findElement(By.xpath("//*[contains(.,'"
-					+ text + "')]")) != null;
-			return result;
-		} catch (Exception e) {
-			getLogger().warn("Exception: " + e);
-			return false;
-		}
-
-	}
-
-	protected abstract String getBaseUrl();
 }
